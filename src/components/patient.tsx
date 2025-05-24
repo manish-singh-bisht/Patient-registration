@@ -115,7 +115,7 @@ const PatientPage = () => {
               onAddPatient={handleAddPatient}
             />
           </div>
-          <div className="overflow-y-auto max-h-[31rem] min-h-[31rem]">
+          <div className="overflow-y-auto max-h-[31rem] min-h-[32.5rem]">
             <PatientsTable patients={patients} />
           </div>
           <div className="flex-shrink-0 mt-4">

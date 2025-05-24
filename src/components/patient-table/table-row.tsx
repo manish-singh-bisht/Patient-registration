@@ -12,7 +12,7 @@ export const PatientTableRow = ({
   patient: PatientReturnData;
 }) => {
   return (
-    <tr className="hover:bg-gray-50">
+    <tr className="hover:bg-gray-100">
       <PatientInfoCell patient={patient} />
       <ContactInfoCell patient={patient} />
       <MedicalInfoCell patient={patient} />

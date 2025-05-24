@@ -67,8 +67,6 @@ export async function getAllPatients({
       currentPage,
       totalCount,
       totalPages,
-      hasNextPage: currentPage < totalPages,
-      hasPreviousPage: currentPage > 1,
     },
   });
   if (!resultParseResult.success) {
