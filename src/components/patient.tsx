@@ -7,6 +7,7 @@ import { Loader } from "./loader";
 import { getAllPatients } from "../db/handlers/patients/get-all-patients";
 import type { PatientReturnData } from "../db/handlers/types/patient/get-all-patient";
 import { PatientDatabase } from "../db/init-pglite-instance";
+import type { PaginationType } from "../db/handlers/types/pagination";
 
 const PAGE_LIMIT = 10;
 
@@ -38,28 +39,24 @@ const PatientPage = () => {
   const [patientState, setPatientState] = useState<{
     patients: PatientReturnData[];
     isLoading: boolean;
-    pagination: {
-      page: number;
-      totalPages: number;
-      totalCount: number;
-    };
+    pagination: PaginationType;
   }>({
     patients: [],
     isLoading: true,
     pagination: {
-      page: 1,
+      currentPage: 1,
       totalPages: 1,
       totalCount: 0,
     },
   });
 
-  const fetchPatients = async ({ page }: { page: number }) => {
+  const fetchPatients = async ({ currentPage }: { currentPage: number }) => {
     setPatientState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const result = await getAllPatients({
         input: {
-          page,
+          page: currentPage,
           limit: PAGE_LIMIT,
         },
       });
@@ -68,7 +65,7 @@ const PatientPage = () => {
         patients: result.patients,
         isLoading: false,
         pagination: {
-          page: result.pagination.currentPage,
+          currentPage: result.pagination.currentPage,
           totalPages: result.pagination.totalPages,
           totalCount: result.pagination.totalCount,
         },
@@ -82,18 +79,18 @@ const PatientPage = () => {
   useEffect(() => {
     const initAndFetch = async () => {
       await PatientDatabase.getInstance();
-      fetchPatients({ page: patientState.pagination.page });
+      fetchPatients({ currentPage: patientState.pagination.currentPage });
     };
 
     initAndFetch();
-  }, [patientState.pagination.page]);
+  }, [patientState.pagination.currentPage]);
 
   const handleAddPatient = () => {
     console.log("Add patient clicked");
   };
 
   const handlePageChange = ({ newPage }: { newPage: number }) => {
-    if (newPage !== patientState.pagination.page) {
+    if (newPage !== patientState.pagination.currentPage) {
       setPatientState((prev) => ({
         ...prev,
         pagination: { ...prev.pagination, page: newPage },
@@ -120,7 +117,7 @@ const PatientPage = () => {
           </div>
           <div className="flex-shrink-0 mt-4">
             <Pagination
-              page={pagination.page}
+              page={pagination.currentPage}
               totalPages={pagination.totalPages}
               onPageChange={handlePageChange}
             />
