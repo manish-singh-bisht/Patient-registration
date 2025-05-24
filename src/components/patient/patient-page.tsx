@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MainTableLayout from "../layouts/main-table-layout";
+import { MainLayout } from "../layouts/main-layout";
 import { PatientsTable } from "../tables/patient-table/patient-table";
 import { Pagination } from "../pagination";
 import { Loader } from "../loader";
@@ -61,10 +61,6 @@ const PatientPage = () => {
     initAndFetch();
   }, [patientState.pagination.currentPage]);
 
-  const handleAddPatient = () => {
-    console.log("Add patient clicked");
-  };
-
   const handlePageChange = ({ newPage }: { newPage: number }) => {
     if (newPage !== patientState.pagination.currentPage) {
       setPatientState((prev) => ({
@@ -77,16 +73,13 @@ const PatientPage = () => {
   const { patients, isLoading, pagination } = patientState;
 
   return (
-    <MainTableLayout>
+    <MainLayout>
       {isLoading ? (
         <Loader label="Loading patients..." />
       ) : (
         <div className="flex flex-col">
           <div className="flex-shrink-0">
-            <PatientPageHeader
-              totalPatients={pagination.totalCount}
-              onAddPatient={handleAddPatient}
-            />
+            <PatientPageHeader totalPatients={pagination.totalCount} />
           </div>
           <div className="overflow-y-auto max-h-[31rem] min-h-[32.5rem]">
             <PatientsTable patients={patients} />
@@ -100,7 +93,7 @@ const PatientPage = () => {
           </div>
         </div>
       )}
-    </MainTableLayout>
+    </MainLayout>
   );
 };
 

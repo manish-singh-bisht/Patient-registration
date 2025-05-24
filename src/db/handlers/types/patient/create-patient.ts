@@ -3,22 +3,18 @@ import { z } from "zod";
 export const CreatePatientInputSchema = z.object({
   first_name: z.string().min(1),
   last_name: z.string().optional(),
-  date_of_birth: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
+  date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
   gender: z.enum(["male", "female", "other"]),
-  phone: z.string().regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number"),
+  phone: z.string().min(1),
   email: z.string().email(),
   address: z.string().min(1),
   city: z.string().min(1),
   state: z.string().min(1),
-  zip_code: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid zip code"),
+  zip_code: z.string(),
 
-  emergency_contact_names: z.array(z.string().min(1)).optional(),
-  emergency_contact_phones: z
-    .array(z.string().regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number"))
-    .optional(),
-  emergency_contact_relationships: z.array(z.string().min(1)).optional(),
+  emergency_contact_names: z.array(z.string()).optional(),
+  emergency_contact_phones: z.array(z.string()).optional(),
+  emergency_contact_relationships: z.array(z.string()).optional(),
 
   insurance_provider: z.string().optional(),
   insurance_policy_number: z.string().optional(),
@@ -34,3 +30,21 @@ export const CreatePatientInputSchema = z.object({
   is_active: z.boolean().default(true),
 });
 export type CreatePatientInput = z.infer<typeof CreatePatientInputSchema>;
+
+export const GENDERS = ["male", "female", "other"] as const;
+export const BLOOD_TYPES = [
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
+  "O+",
+  "O-",
+] as const;
+
+export const GenderSchema = z.enum(GENDERS);
+export const BloodTypeSchema = z.enum(BLOOD_TYPES);
+
+export type Gender = z.infer<typeof GenderSchema>;
+export type BloodType = z.infer<typeof BloodTypeSchema>;
