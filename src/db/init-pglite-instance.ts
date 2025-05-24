@@ -12,8 +12,7 @@ export class PatientDatabase {
 
   private static readonly dbOptions = {
     extensions: { live },
-    dataDir: import.meta.env.DB_STORAGE_PATH,
-    id: import.meta.env.WORKER_GROUP_ID,
+    dataDir: import.meta.env.VITE_DB_STORAGE_PATH,
     meta: {
       initQueries: [createPatientTableQuery],
     },
@@ -34,6 +33,7 @@ export class PatientDatabase {
   }
 
   public static async initializePGLiteDatabase() {
+    console.log(import.meta.env.VITE_DB_STORAGE_PATH);
     await this.PGliteInitialize();
   }
 

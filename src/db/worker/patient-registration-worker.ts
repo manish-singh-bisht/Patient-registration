@@ -7,7 +7,7 @@ worker({
     const { dataDir, meta } = options ?? {};
 
     const pg = new PGlite({
-      dataDir: dataDir ?? import.meta.env.DB_STORAGE_PATH,
+      dataDir: dataDir ?? import.meta.env.VITE_DB_STORAGE_PATH,
       extensions: {
         live,
       },
