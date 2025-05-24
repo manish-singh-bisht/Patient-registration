@@ -27,8 +27,8 @@ export const patientSchema = `
 
         preferred_language VARCHAR(50) DEFAULT 'English',
 
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
         is_active BOOLEAN DEFAULT true
 `;
