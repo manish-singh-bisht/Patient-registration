@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const patientSchema = z.object({
+export const PatientSchema = z.object({
   id: z.string(),
   first_name: z.string().max(100),
   last_name: z.string().max(100).optional(),
