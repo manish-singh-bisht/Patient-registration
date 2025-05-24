@@ -1,5 +1,5 @@
 export const patientSchema = `
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         first_name VARCHAR(100) NOT NULL,
         last_name VARCHAR(100),
         date_of_birth DATE NOT NULL,
@@ -23,7 +23,7 @@ export const patientSchema = `
         allergies TEXT,
         current_medications TEXT,
         medical_history TEXT,
-        family_history TEXT
+        family_history TEXT,
 
         preferred_language VARCHAR(50) DEFAULT 'English',
 
