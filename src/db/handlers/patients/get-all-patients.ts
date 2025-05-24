@@ -1,14 +1,10 @@
-import { z } from "zod";
 import { calculateOffset } from "../../../utils";
 import { PatientDatabase } from "../../init-pglite-instance";
 import { getAllPatientsReadQuery } from "../../queries/reads/patients/get-many";
-
-export const GetAllPatientsInputSchema = z.object({
-  page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().max(100).default(20),
-});
-
-export type GetAllPatientsInput = z.infer<typeof GetAllPatientsInputSchema>;
+import {
+  GetAllPatientsInputSchema,
+  type GetAllPatientsInput,
+} from "../types/patient/get-all-patient";
 
 export async function getAllPatients({
   input,

@@ -1,5 +1,8 @@
 import { PatientDatabase } from "../../init-pglite-instance";
-import { RawSQLQuerySchema, type RawSQLQueryInput } from "./type";
+import {
+  RawSQLQuerySchema,
+  type RawSQLQueryInput,
+} from "../types/raw-sql/type";
 
 export async function runRawSQLReadQuery({
   input,
