@@ -23,6 +23,7 @@ export const patientSchema = `
         allergies TEXT,
         current_medications TEXT,
         medical_history TEXT,
+        family_history TEXT
 
         preferred_language VARCHAR(50) DEFAULT 'English',
 

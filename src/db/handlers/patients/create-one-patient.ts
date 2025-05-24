@@ -30,6 +30,7 @@ export const PatientInputSchema = z.object({
   allergies: z.string().optional(),
   current_medications: z.string().optional(),
   medical_history: z.string().optional(),
+  family_history: z.string().optional(),
 
   preferred_language: z.string().default("English"),
   is_active: z.boolean().default(true),
@@ -73,6 +74,7 @@ export async function createOnePatient({ input }: { input: PatientInput }) {
     patient.allergies ?? null,
     patient.current_medications ?? null,
     patient.medical_history ?? null,
+    patient.family_history ?? null,
 
     patient.preferred_language ?? "English",
     patient.is_active ?? true,
