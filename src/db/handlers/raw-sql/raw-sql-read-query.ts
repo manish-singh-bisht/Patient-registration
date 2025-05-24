@@ -1,7 +1,11 @@
 import { PatientDatabase } from "../../init-pglite-instance";
 import { RawSQLQuerySchema, type RawSQLQueryInput } from "./type";
 
-export async function runRawSQLQuery({ input }: { input: RawSQLQueryInput }) {
+export async function runRawSQLReadQuery({
+  input,
+}: {
+  input: RawSQLQueryInput;
+}) {
   const result = RawSQLQuerySchema.safeParse(input);
 
   if (!result.success) {
