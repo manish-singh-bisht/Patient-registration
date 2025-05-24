@@ -65,7 +65,7 @@ export const PatientPage = () => {
     if (newPage !== patientState.pagination.currentPage) {
       setPatientState((prev) => ({
         ...prev,
-        pagination: { ...prev.pagination, page: newPage },
+        pagination: { ...prev.pagination, currentPage: newPage },
       }));
     }
   };
