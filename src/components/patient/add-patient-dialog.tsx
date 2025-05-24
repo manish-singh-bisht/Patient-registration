@@ -12,6 +12,7 @@ import {
   type Gender,
 } from "../../db/handlers/types/patient/create-patient";
 import { createOnePatient } from "../../db/handlers/patients/create-one-patient";
+import { normalizeEmptyString } from "../../utils";
 
 interface PatientFormData {
   first_name: string;
@@ -76,14 +77,7 @@ export const AddPatientDialog = ({
       emergency_contact_names: [""],
       emergency_contact_phones: [""],
       emergency_contact_relationships: [""],
-      insurance_provider: "",
-      insurance_policy_number: "",
-      medical_record_number: "",
       blood_type: BloodTypeSchema.Enum["A+"],
-      allergies: "",
-      current_medications: "",
-      medical_history: "",
-      family_history: "",
       preferred_language: "English",
       is_active: true,
     },
@@ -243,21 +237,28 @@ export const AddPatientDialog = ({
     try {
       const submitData = {
         ...formState.data,
-        last_name: formState.data.last_name?.trim() ?? undefined,
-        insurance_provider:
-          formState.data.insurance_provider?.trim() ?? undefined,
-        insurance_policy_number:
-          formState.data.insurance_policy_number?.trim() ?? undefined,
-        medical_record_number:
-          formState.data.medical_record_number?.trim() ?? undefined,
-        blood_type: formState.data.blood_type ?? undefined,
-        allergies: formState.data.allergies?.trim() ?? undefined,
-        current_medications:
-          formState.data.current_medications?.trim() ?? undefined,
-        medical_history: formState.data.medical_history?.trim() ?? undefined,
-        family_history: formState.data.family_history?.trim() ?? undefined,
-        preferred_language:
-          formState.data.preferred_language?.trim() ?? undefined,
+        last_name: normalizeEmptyString({ value: formState.data.last_name }),
+        insurance_provider: normalizeEmptyString({
+          value: formState.data.insurance_provider,
+        }),
+        insurance_policy_number: normalizeEmptyString({
+          value: formState.data.insurance_policy_number,
+        }),
+        medical_record_number: normalizeEmptyString({
+          value: formState.data.medical_record_number,
+        }),
+        blood_type: formState.data.blood_type,
+        allergies: normalizeEmptyString({ value: formState.data.allergies }),
+        current_medications: normalizeEmptyString({
+          value: formState.data.current_medications,
+        }),
+        medical_history: normalizeEmptyString({
+          value: formState.data.medical_history,
+        }),
+        family_history: normalizeEmptyString({
+          value: formState.data.family_history,
+        }),
+        preferred_language: formState.data.preferred_language,
       } satisfies PatientFormData;
 
       const filteredNames = formState.data.emergency_contact_names?.filter(
@@ -275,10 +276,6 @@ export const AddPatientDialog = ({
         submitData.emergency_contact_names = filteredNames;
         submitData.emergency_contact_phones = filteredPhones;
         submitData.emergency_contact_relationships = filteredRelationships;
-      } else {
-        delete submitData.emergency_contact_names;
-        delete submitData.emergency_contact_phones;
-        delete submitData.emergency_contact_relationships;
       }
 
       await createOnePatient({ input: submitData });
@@ -411,7 +408,7 @@ export const AddPatientDialog = ({
                 </label>
                 <input
                   type="text"
-                  value={formData.last_name ?? ""}
+                  value={formData.last_name}
                   onChange={handleTextInputChange({ field: "last_name" })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -603,7 +600,7 @@ export const AddPatientDialog = ({
                       </label>
                       <input
                         type="text"
-                        value={formData.emergency_contact_names?.[index] ?? ""}
+                        value={formData.emergency_contact_names?.[index]}
                         onChange={handleEmergencyContactInputChange({
                           index,
                           field: "emergency_contact_names",
@@ -617,7 +614,7 @@ export const AddPatientDialog = ({
                       </label>
                       <input
                         type="tel"
-                        value={formData.emergency_contact_phones?.[index] ?? ""}
+                        value={formData.emergency_contact_phones?.[index]}
                         onChange={handleEmergencyContactInputChange({
                           index,
                           field: "emergency_contact_phones",
@@ -660,7 +657,7 @@ export const AddPatientDialog = ({
                 </label>
                 <input
                   type="text"
-                  value={formData.insurance_provider ?? ""}
+                  value={formData.insurance_provider}
                   onChange={handleTextInputChange({
                     field: "insurance_provider",
                   })}
@@ -673,7 +670,7 @@ export const AddPatientDialog = ({
                 </label>
                 <input
                   type="text"
-                  value={formData.insurance_policy_number ?? ""}
+                  value={formData.insurance_policy_number}
                   onChange={handleTextInputChange({
                     field: "insurance_policy_number",
                   })}
@@ -694,7 +691,7 @@ export const AddPatientDialog = ({
                 </label>
                 <input
                   type="text"
-                  value={formData.medical_record_number ?? ""}
+                  value={formData.medical_record_number}
                   onChange={handleTextInputChange({
                     field: "medical_record_number",
                   })}
@@ -724,7 +721,7 @@ export const AddPatientDialog = ({
                 Allergies
               </label>
               <AutoResizeTextArea
-                value={formData.allergies ?? ""}
+                value={formData.allergies}
                 onChange={handleTextAreaChange({ field: "allergies" })}
                 placeholder="List any known allergies..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -736,7 +733,7 @@ export const AddPatientDialog = ({
                 Current Medications
               </label>
               <AutoResizeTextArea
-                value={formData.current_medications ?? ""}
+                value={formData.current_medications}
                 onChange={handleTextAreaChange({
                   field: "current_medications",
                 })}
@@ -750,7 +747,7 @@ export const AddPatientDialog = ({
                 Medical History
               </label>
               <AutoResizeTextArea
-                value={formData.medical_history ?? ""}
+                value={formData.medical_history}
                 onChange={handleTextAreaChange({ field: "medical_history" })}
                 placeholder="Previous medical conditions, surgeries, etc..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -762,7 +759,7 @@ export const AddPatientDialog = ({
                 Family History
               </label>
               <AutoResizeTextArea
-                value={formData.family_history ?? ""}
+                value={formData.family_history}
                 onChange={handleTextAreaChange({ field: "family_history" })}
                 placeholder="Family medical history..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -782,7 +779,7 @@ export const AddPatientDialog = ({
                 </label>
                 <input
                   type="text"
-                  value={formData.preferred_language ?? ""}
+                  value={formData.preferred_language}
                   onChange={handleTextInputChange({
                     field: "preferred_language",
                   })}
