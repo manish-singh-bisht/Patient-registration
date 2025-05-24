@@ -1,13 +1,15 @@
-import { Plus } from "lucide-react";
+import { Plus, Terminal } from "lucide-react";
 import { useState } from "react";
 import { AddPatientDialog } from "./add-patient-dialog";
+import { RunRawSqlDialog } from "../raw-sql/raw-sql-dialog";
 
 export const PatientPageHeader = ({
   totalPatients,
 }: {
   totalPatients: number;
 }) => {
-  const [showDialog, setShowDialog] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showSqlDialog, setShowSqlDialog] = useState(false);
 
   return (
     <div className="mb-4">
@@ -18,19 +20,35 @@ export const PatientPageHeader = ({
           </div>
           <p className="text-gray-600">Total Patients: {totalPatients}</p>
         </div>
-        <button
-          onClick={() => setShowDialog(true)}
-          className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors hover:cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          Register Patient
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowSqlDialog(true)}
+            className="bg-gray-200 hover:bg-gray-300 cursor-pointer text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <Terminal className="w-4 h-4" />
+            Run SQL
+          </button>
+          <button
+            onClick={() => setShowAddDialog(true)}
+            className="bg-blue-600 hover:bg-blue-800 cursor-pointer text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Register Patient
+          </button>
+        </div>
       </div>
 
-      {showDialog && (
+      {showAddDialog && (
         <AddPatientDialog
-          onClose={() => setShowDialog(false)}
-          showDialog={showDialog}
+          onClose={() => setShowAddDialog(false)}
+          showDialog={showAddDialog}
+        />
+      )}
+
+      {showSqlDialog && (
+        <RunRawSqlDialog
+          onClose={() => setShowSqlDialog(false)}
+          showDialog={showSqlDialog}
         />
       )}
     </div>

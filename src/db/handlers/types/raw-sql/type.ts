@@ -61,55 +61,53 @@ const suspiciousPatterns = [
   /\b(--|#|\/\*).*?(insert|update|delete|drop)/i,
 ];
 
-export const RawSQLQuerySchema = z.object({
-  rawInput: z
-    .string()
-    .min(1, "Query input must be a non-empty string")
-    .trim()
-    .refine(
-      (query) => {
-        const trimmed = query.replace(/;+$/, "").trim();
+export const RawSQLQuerySchema = z
+  .string()
+  .min(1, "Query input must be a non-empty string")
+  .trim()
+  .refine(
+    (query) => {
+      const trimmed = query.replace(/;+$/, "").trim();
 
-        if (!/^\s*(\/\*.*?\*\/)?\s*select\s/i.test(trimmed)) return false;
+      if (!/^\s*(\/\*.*?\*\/)?\s*select\s/i.test(trimmed)) return false;
 
-        for (const keyword of forbiddenKeywords) {
-          if (new RegExp(`\\b${keyword}\\b`, "i").test(trimmed)) return false;
-        }
-
-        for (const pattern of dangerousFunctionPatterns) {
-          if (pattern.test(trimmed)) return false;
-        }
-
-        for (const pattern of suspiciousPatterns) {
-          if (pattern.test(trimmed)) return false;
-        }
-
-        const ctePattern =
-          /\bwith\s+\w+\s+as\s*\([^)]*?(insert|update|delete|drop|alter|create)[^)]*?\)/i;
-        if (ctePattern.test(trimmed)) return false;
-
-        const nestedMutationPattern =
-          /\(\s*select[^)]*?(insert|update|delete|drop|alter|create)[^)]*?\)/i;
-        if (nestedMutationPattern.test(trimmed)) return false;
-
-        if (trimmed.length > 10000) return false;
-
-        let parenDepth = 0;
-        let maxDepth = 0;
-        for (const char of trimmed) {
-          if (char === "(") parenDepth++;
-          if (char === ")") parenDepth--;
-          maxDepth = Math.max(maxDepth, parenDepth);
-        }
-
-        if (maxDepth > 20) return false;
-
-        return true;
-      },
-      {
-        message: "Query is unsafe or invalid.",
+      for (const keyword of forbiddenKeywords) {
+        if (new RegExp(`\\b${keyword}\\b`, "i").test(trimmed)) return false;
       }
-    ),
-});
+
+      for (const pattern of dangerousFunctionPatterns) {
+        if (pattern.test(trimmed)) return false;
+      }
+
+      for (const pattern of suspiciousPatterns) {
+        if (pattern.test(trimmed)) return false;
+      }
+
+      const ctePattern =
+        /\bwith\s+\w+\s+as\s*\([^)]*?(insert|update|delete|drop|alter|create)[^)]*?\)/i;
+      if (ctePattern.test(trimmed)) return false;
+
+      const nestedMutationPattern =
+        /\(\s*select[^)]*?(insert|update|delete|drop|alter|create)[^)]*?\)/i;
+      if (nestedMutationPattern.test(trimmed)) return false;
+
+      if (trimmed.length > 10000) return false;
+
+      let parenDepth = 0;
+      let maxDepth = 0;
+      for (const char of trimmed) {
+        if (char === "(") parenDepth++;
+        if (char === ")") parenDepth--;
+        maxDepth = Math.max(maxDepth, parenDepth);
+      }
+
+      if (maxDepth > 20) return false;
+
+      return true;
+    },
+    {
+      message: "Query is unsafe or invalid.",
+    }
+  );
 
 export type RawSQLQueryInput = z.infer<typeof RawSQLQuerySchema>;

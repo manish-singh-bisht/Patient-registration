@@ -16,7 +16,7 @@ export async function runRawSQLReadQuery({
   }
 
   const db = await PatientDatabase.getInstance();
-  let query = result.data.rawInput.trim().replace(/;+$/, "");
+  let query = result.data.trim().replace(/;+$/, "");
 
   const maxDefaultLimit = 1000;
   const hasLimit = /\blimit\s+\d+/i.test(query);
