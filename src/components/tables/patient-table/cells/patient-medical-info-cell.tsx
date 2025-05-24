@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import type { PatientReturnData } from "../../../db/handlers/types/patient/get-all-patient";
+import type { PatientReturnData } from "../../../../db/handlers/types/patient/get-all-patient";
 
 export const MedicalInfoCell = ({
   patient,

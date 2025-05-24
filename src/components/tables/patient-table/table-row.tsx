@@ -1,4 +1,4 @@
-import type { PatientReturnData } from "../../db/handlers/types/patient/get-all-patient";
+import type { PatientReturnData } from "../../../db/handlers/types/patient/get-all-patient";
 import { ContactInfoCell } from "./cells/patient-contact-cell";
 import { EmergencyContactCell } from "./cells/patient-emergency-contact-cell";
 import { PatientInfoCell } from "./cells/patient-info-cell";
