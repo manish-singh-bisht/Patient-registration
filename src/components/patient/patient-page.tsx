@@ -11,7 +11,7 @@ import { PatientPageHeader } from "./patient-header";
 
 const PAGE_LIMIT = 10;
 
-const PatientPage = () => {
+export const PatientPage = () => {
   const [patientState, setPatientState] = useState<{
     patients: PatientReturnData[];
     isLoading: boolean;
@@ -96,5 +96,3 @@ const PatientPage = () => {
     </MainLayout>
   );
 };
-
-export default PatientPage;

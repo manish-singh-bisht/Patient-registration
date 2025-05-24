@@ -5,8 +5,10 @@ export const PatientSchema = z.object({
   first_name: z.string().max(100),
   last_name: z.string().max(100).optional(),
   date_of_birth: z
-    .string()
+    .union([z.string(), z.date()])
+    .transform((val) => (typeof val === "string" ? val : val.toISOString()))
     .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date" }),
+
   gender: z.enum(["male", "female", "other"]).optional(),
   phone: z.string().max(20),
   email: z.string().email().max(255),
@@ -15,9 +17,9 @@ export const PatientSchema = z.object({
   state: z.string().max(50),
   zip_code: z.string().max(20),
 
-  emergency_contact_names: z.array(z.string()).optional(),
-  emergency_contact_phones: z.array(z.string()).optional(),
-  emergency_contact_relationships: z.array(z.string()).optional(),
+  emergency_contact_names: z.array(z.string()).nullish(),
+  emergency_contact_phones: z.array(z.string()).nullish(),
+  emergency_contact_relationships: z.array(z.string()).nullish(),
 
   insurance_provider: z.string().max(200).optional(),
   insurance_policy_number: z.string().max(200).optional(),
@@ -35,8 +37,14 @@ export const PatientSchema = z.object({
 
   preferred_language: z.string().max(50).default("English"),
 
-  created_at: z.string(),
-  updated_at: z.string(),
+  created_at: z
+    .union([z.string(), z.date()])
+    .transform((val) => (typeof val === "string" ? val : val.toISOString()))
+    .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date" }),
+  updated_at: z
+    .union([z.string(), z.date()])
+    .transform((val) => (typeof val === "string" ? val : val.toISOString()))
+    .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date" }),
 
   is_active: z.boolean().default(true),
 });
