@@ -1,65 +1,81 @@
 import { PatientDatabase } from "../../init-pglite-instance";
 import { createOnePatientWriteQuery } from "../../queries/writes/patients/create-one-patient";
+import { z } from "zod";
 
-export type PatientInput = {
-  first_name: string;
-  last_name?: string;
-  date_of_birth: string;
-  gender: "male" | "female" | "other";
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  zip_code: string;
+export const PatientInputSchema = z.object({
+  first_name: z.string().min(1),
+  last_name: z.string().optional(),
+  date_of_birth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
+  gender: z.enum(["male", "female", "other"]),
+  phone: z.string().regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number"),
+  email: z.string().email(),
+  address: z.string().min(1),
+  city: z.string().min(1),
+  state: z.string().min(1),
+  zip_code: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid zip code"),
 
-  emergency_contact_names?: string[];
-  emergency_contact_phones?: string[];
-  emergency_contact_relationships?: string[];
+  emergency_contact_names: z.array(z.string().min(1)).optional(),
+  emergency_contact_phones: z
+    .array(z.string().regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number"))
+    .optional(),
+  emergency_contact_relationships: z.array(z.string().min(1)).optional(),
 
-  insurance_provider?: string;
-  insurance_policy_number?: string;
+  insurance_provider: z.string().optional(),
+  insurance_policy_number: z.string().optional(),
 
-  medical_record_number?: string;
-  blood_type?: string;
-  allergies?: string;
-  current_medications?: string;
-  medical_history?: string;
+  medical_record_number: z.string().optional(),
+  blood_type: z.string().optional(),
+  allergies: z.string().optional(),
+  current_medications: z.string().optional(),
+  medical_history: z.string().optional(),
 
-  preferred_language?: string;
-  is_active?: boolean;
-};
+  preferred_language: z.string().default("English"),
+  is_active: z.boolean().default(true),
+});
+export type PatientInput = z.infer<typeof PatientInputSchema>;
 
 export async function createOnePatient({ input }: { input: PatientInput }) {
+  const parsed = PatientInputSchema.safeParse(input);
+
+  if (!parsed.success) {
+    throw new Error(
+      `Validation failed: ${JSON.stringify(parsed.error.format())}`
+    );
+  }
+
+  const patient = parsed.data;
+
   const db = await PatientDatabase.getInstance();
 
   const params = [
-    input.first_name,
-    input.last_name ?? null,
-    input.date_of_birth,
-    input.gender,
-    input.phone,
-    input.email,
-    input.address,
-    input.city,
-    input.state,
-    input.zip_code,
+    patient.first_name,
+    patient.last_name ?? null,
+    patient.date_of_birth,
+    patient.gender,
+    patient.phone,
+    patient.email,
+    patient.address,
+    patient.city,
+    patient.state,
+    patient.zip_code,
 
-    input.emergency_contact_names ?? null,
-    input.emergency_contact_phones ?? null,
-    input.emergency_contact_relationships ?? null,
+    patient.emergency_contact_names ?? null,
+    patient.emergency_contact_phones ?? null,
+    patient.emergency_contact_relationships ?? null,
 
-    input.insurance_provider ?? null,
-    input.insurance_policy_number ?? null,
+    patient.insurance_provider ?? null,
+    patient.insurance_policy_number ?? null,
 
-    input.medical_record_number ?? null,
-    input.blood_type ?? null,
-    input.allergies ?? null,
-    input.current_medications ?? null,
-    input.medical_history ?? null,
+    patient.medical_record_number ?? null,
+    patient.blood_type ?? null,
+    patient.allergies ?? null,
+    patient.current_medications ?? null,
+    patient.medical_history ?? null,
 
-    input.preferred_language ?? "English",
-    input.is_active ?? true,
+    patient.preferred_language ?? "English",
+    patient.is_active ?? true,
   ];
 
   const result = await db.query(createOnePatientWriteQuery, params);
