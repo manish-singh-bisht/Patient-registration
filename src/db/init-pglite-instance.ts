@@ -33,8 +33,10 @@ export class PatientDatabase {
   }
 
   public static async initializePGLiteDatabase() {
-    console.log(import.meta.env.VITE_DB_STORAGE_PATH);
-    await this.PGliteInitialize();
+    if (!this.dbInstance) {
+      await this.PGliteInitialize();
+    }
+    return this.dbInstance!;
   }
 
   public static async getInstance(): Promise<Readonly<PGliteWorker>> {
