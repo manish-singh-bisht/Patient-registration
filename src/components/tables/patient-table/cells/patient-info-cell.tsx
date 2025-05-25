@@ -6,20 +6,18 @@ export const PatientInfoCell = ({
 }: {
   patient: PatientReturnData;
 }) => {
-  const calculateAge = ({ dateOfBirth }: { dateOfBirth: string }): number => {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
+  const formatDate = ({ dateOfBirth }: { dateOfBirth: string }): string => {
+    const date = new Date(dateOfBirth);
 
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
+    if (isNaN(date.getTime())) {
+      return "Invalid date";
     }
 
-    return age;
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
   };
 
   return (
@@ -30,10 +28,12 @@ export const PatientInfoCell = ({
         </div>
         <div className="text-sm text-gray-500 flex items-center">
           <Calendar className="w-3 h-3 mr-1" />
-          {calculateAge({ dateOfBirth: patient.date_of_birth })} years old
+          <span className="text-[0.78rem]">
+            {formatDate({ dateOfBirth: patient.date_of_birth })}
+          </span>
         </div>
         <div className="text-xs text-gray-400">
-          MRN: {patient.medical_record_number}
+          MRN: {patient.medical_record_number ?? "N/A"}
         </div>
       </div>
     </td>
