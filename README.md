@@ -27,7 +27,7 @@ To run this project locally:
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/Patient-registration.git
-cd patient-registration
+cd Patient-registration
 
 # Install dependencies
 pnpm install
