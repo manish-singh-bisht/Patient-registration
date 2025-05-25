@@ -15,24 +15,25 @@ export const PatientPage = () => {
   const [patientState, setPatientState] = useState<{
     patients: PatientReturnData[];
     isLoading: boolean;
-    pagination: PaginationType;
+    pagination: Omit<PaginationType, "currentPage">;
   }>({
     patients: [],
     isLoading: true,
     pagination: {
-      currentPage: 1,
       totalPages: 1,
       totalCount: 0,
     },
   });
 
-  const fetchPatients = async ({ currentPage }: { currentPage: number }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const fetchPatients = async ({ page }: { page: number }) => {
     setPatientState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const result = await getAllPatients({
         input: {
-          page: currentPage,
+          page,
           limit: PAGE_LIMIT,
         },
       });
@@ -41,7 +42,6 @@ export const PatientPage = () => {
         patients: result.patients,
         isLoading: false,
         pagination: {
-          currentPage: result.pagination.currentPage,
           totalPages: result.pagination.totalPages,
           totalCount: result.pagination.totalCount,
         },
@@ -54,19 +54,29 @@ export const PatientPage = () => {
 
   useEffect(() => {
     const initAndFetch = async () => {
-      await PatientDatabase.getInstance();
-      fetchPatients({ currentPage: patientState.pagination.currentPage });
+      const db = await PatientDatabase.getInstance();
+
+      await db.listen("patient_created", () => {
+        // if the current page in some tab is 1 we refresh the query, otherwise we return to page 1 if some tab is in other page
+        setCurrentPage((prev) => {
+          if (prev === 1) {
+            fetchPatients({ page: 1 });
+            return prev;
+          }
+
+          return 1;
+        });
+      });
+
+      fetchPatients({ page: currentPage });
     };
 
     initAndFetch();
-  }, [patientState.pagination.currentPage]);
+  }, [currentPage]);
 
   const handlePageChange = ({ newPage }: { newPage: number }) => {
-    if (newPage !== patientState.pagination.currentPage) {
-      setPatientState((prev) => ({
-        ...prev,
-        pagination: { ...prev.pagination, currentPage: newPage },
-      }));
+    if (newPage !== currentPage) {
+      setCurrentPage(newPage);
     }
   };
 
@@ -86,7 +96,7 @@ export const PatientPage = () => {
           </div>
           <div className="flex-shrink-0 mt-4">
             <Pagination
-              page={pagination.currentPage}
+              page={currentPage}
               totalPages={pagination.totalPages}
               onPageChange={handlePageChange}
             />

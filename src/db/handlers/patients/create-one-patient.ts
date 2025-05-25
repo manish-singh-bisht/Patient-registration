@@ -53,5 +53,12 @@ export async function createOnePatient({
   ];
 
   const result = await db.query(createOnePatientWriteQuery, params);
-  return result.rows[0];
+
+  const notificationPayload = JSON.stringify({
+    action: "patient_created",
+    timestamp: new Date().toISOString(),
+    patient_data: result.rows[0],
+  });
+
+  await db.query(`NOTIFY patient_created, '${notificationPayload}'`);
 }
