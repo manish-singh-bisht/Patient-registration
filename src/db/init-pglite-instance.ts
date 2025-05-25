@@ -1,14 +1,10 @@
 import { live } from "@electric-sql/pglite/live";
 import { PGliteWorker } from "@electric-sql/pglite/worker";
 import { createPatientTableQuery } from "./queries/writes/patients/create-table";
+import PatientWorker from "./worker/patient-registration-worker.ts?worker";
 
 export class PatientDatabase {
   private static dbInstance: PGliteWorker | null = null;
-
-  private static readonly workerUrl = new URL(
-    "./worker/patient-registration-worker.ts",
-    import.meta.url
-  );
 
   private static readonly dbOptions = {
     extensions: { live },
@@ -20,10 +16,7 @@ export class PatientDatabase {
 
   private static async PGliteInitialize(): Promise<void> {
     try {
-      const db = await PGliteWorker.create(
-        new Worker(this.workerUrl, { type: "module" }),
-        this.dbOptions
-      );
+      const db = await PGliteWorker.create(new PatientWorker(), this.dbOptions);
 
       this.dbInstance = db;
     } catch (error) {
